@@ -1,6 +1,5 @@
 // aplikasi pemesanan makanan
 // self service
-// restonya salah satu terkenal
 // spesifikasi
 // terminal web
 // 1. Menu
@@ -10,127 +9,70 @@
 // - kalkulasi harga setiap item dan total item
 // selalu ada menu exit
 
-// clue agar bisa berulang gunakan perulangan
-
-// koda-b4-homework1 || upload
-// index.js
-// flowchart-pesenMakan.md
-// flowchart-keranjang.md
-// README.md
-
 const readline = require("readline").createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
 const searchFood = [
-  { menu: "1. Ayam dada", harga: 30000 },
-  {
-    menu: "2. Ayam sayap",
-    harga: 21000,
-  },
-  {
-    menu: "3. Ayam paha",
-    harga: 28000,
-  },
-  {
-    menu: "4. perkedel",
-    harga: 17000,
-  },
-  {
-    menu: "5. Rice",
-    harga: 11000,
-  },
-  {
-    menu: "6. french fries",
-    harga: 20000,
-  },
-  {
-    menu: "7 . Mineral Water",
-    harga: 8000,
-  },
-  {
-    menu: "8. Fanta",
-    harga: 14000,
-  },
-  {
-    menu: "9. Coca-Cola",
-    harga: 15000,
-  },
-  {
-    menu: "10. Mango Float",
-    harga: 1000,
-  },
+  { menu: "Ayam dada", harga: 30000 },
+  { menu: "Ayam sayap", harga: 21000 },
+  { menu: "Ayam paha", harga: 28000 },
+  { menu: "Perkedel", harga: 17000 },
+  { menu: "Rice", harga: 11000 },
+  { menu: "French fries", harga: 20000 },
+  { menu: "Mineral Water", harga: 8000 },
+  { menu: "Fanta", harga: 14000 },
+  { menu: "Coca-Cola", harga: 15000 },
+  { menu: "Mango Float", harga: 1000 },
 ];
 
+// data keranjang
+let simpanKeKeranjang = [];
+let jumlahKeranjang = 0; // index manual
+let totalHargaKeranjang = 0;
+
+// data history
+let historyPesanan = [];
+let jumlahHistory = 0; // index manual
+let totalHargaHistory = 0;
+
 function menuUtama() {
-  // Pesan Pembuka
-  console.log("\n<---------Selamat datang di KFC------------>\n");
+  console.log("\n<--------- Selamat datang di KFC ----------->\n");
   console.log("1. Pilih Menu");
   console.log("2. Keranjang");
   console.log("3. History");
   console.log("4. Exit");
 }
 
-let totalMenu = 10;
-
 function menuMakan() {
-  for (let i = 0; i < totalMenu; i++) {
-    // simpan menu ke varibel
-    let menu = searchFood[i].menu;
-    // simpan harga ke varibel
-    let harga = searchFood[i].harga;
-    // variabel baru untuk digabung
-    let gabung = menu + ": " + harga;
-
-    console.log(gabung);
+  let i = 0;
+  while (i < 10) {
+    console.log(
+      i + 1 + ". " + searchFood[i].menu + " - Rp" + searchFood[i].harga
+    );
+    i = i + 1;
   }
 }
 
 function pilihMenu(menu) {
-  switch (menu) {
-    case 1:
-      console.log(`${searchFood[0].menu} = ${searchFood[0].harga}`);
-      break;
-    case 2:
-      console.log(`${searchFood[1].menu} = ${searchFood[1].harga}`);
-      break;
-    case 3:
-      console.log(`${searchFood[2].menu} = ${searchFood[2].harga}`);
-      break;
-    case 4:
-      console.log(`${searchFood[3].menu} = ${searchFood[3].harga}`);
-      break;
-    case 5:
-      console.log(`${searchFood[4].menu} = ${searchFood[4].harga}`);
-      break;
-    case 6:
-      console.log(`${searchFood[5].menu} = ${searchFood[5].harga}`);
-      break;
-    case 7:
-      console.log(`${searchFood[6].menu} ${searchFood[6].harga}`);
-      break;
-    case 8:
-      console.log(`${searchFood[7].menu} ${searchFood[7].harga}`);
-      break;
-    case 9:
-      console.log(`${searchFood[8].menu} ${searchFood[8].harga}`);
-      break;
-    case 10:
-      console.log(`${searchFood[9].menu} ${searchFood[9].harga}`);
-      break;
+  if (menu > 0 && menu <= 10) {
+    console.log(
+      searchFood[menu - 1].menu + " = Rp" + searchFood[menu - 1].harga
+    );
+  } else {
+    console.log("Menu tidak tersedia");
   }
 }
-//
 
 const menuPertanyaan = () => {
   menuUtama();
-  readline.question("silahkan pilih : ", (question) => {
+  readline.question("Silahkan pilih : ", (question) => {
     console.clear();
     let ubahQuestion = parseInt(question);
     if (ubahQuestion === 1) {
       menuMakan();
-      kumpulanPertanyaan();
+      pertanyaanPertama();
     } else if (ubahQuestion === 2) {
       console.clear();
       keranjang();
@@ -140,118 +82,113 @@ const menuPertanyaan = () => {
     } else if (ubahQuestion === 4) {
       console.clear();
       exit();
+    } else {
+      menuPertanyaan();
     }
   });
 };
-menuPertanyaan();
-
-let keranjangJawabanMenu = [];
-let simpanKeKeranjang = [];
-let jumlahKeranjang = 0;
-let sumHarga = 0;
 
 const pertanyaanPertama = () => {
-  readline.question("Silahkan pilih menu : ", (jawaban1) => {
+  readline.question("Silahkan pilih nomor menu : ", (jawaban1) => {
     console.clear();
     let ubahJawaban1 = parseInt(jawaban1);
 
-    pilihMenu(ubahJawaban1);
+    if (ubahJawaban1 > 0 && ubahJawaban1 <= 10) {
+      pilihMenu(ubahJawaban1);
 
-    // let aksesKey =
-    //   // console.log(gabung);
+      // masukkan ke keranjang
+      simpanKeKeranjang[jumlahKeranjang] = {
+        menu: searchFood[ubahJawaban1 - 1].menu,
+        harga: searchFood[ubahJawaban1 - 1].harga,
+      };
 
-    keranjangJawabanMenu = [
-      ...keranjangJawabanMenu,
-      searchFood[ubahJawaban1 - 1].menu +
-        " " +
-        "=" +
-        " " +
-        searchFood[ubahJawaban1 - 1].harga,
+      totalHargaKeranjang =
+        totalHargaKeranjang + searchFood[ubahJawaban1 - 1].harga;
+      jumlahKeranjang = jumlahKeranjang + 1;
 
-      (sumHarga = searchFood[ubahJawaban1 - 1].harga),
-      console.log(sumHarga),
-    ];
+      // masukkan juga ke history
+      historyPesanan[jumlahHistory] = {
+        menu: searchFood[ubahJawaban1 - 1].menu,
+        harga: searchFood[ubahJawaban1 - 1].harga,
+      };
 
-    simpanKeKeranjang[jumlahKeranjang] = `${
-      searchFood[ubahJawaban1 - 1].menu
-    } = ${searchFood[ubahJawaban1 - 1].harga}`;
+      totalHargaHistory =
+        totalHargaHistory + searchFood[ubahJawaban1 - 1].harga;
+      jumlahHistory = jumlahHistory + 1;
 
-    //
-    jumlahKeranjang = jumlahKeranjang + 1;
-    console.log(keranjangJawabanMenu);
+      console.log("\nItem ditambahkan ke keranjang!\n");
+    } else {
+      console.log("Nomor menu tidak valid!\n");
+    }
 
-    readline.question("Mau pilih menu lagi (Y/N) ? ", (jawaban2) => {
+    readline.question("Mau pilih menu lagi (Y/N)? ", (jawaban2) => {
       console.clear();
       if (jawaban2 === "Y" || jawaban2 === "y") {
         menuMakan();
         pertanyaanPertama();
-      } else if (jawaban2 === "N" || jawaban2 === "n") {
+      } else {
         menuPertanyaan();
       }
     });
   });
 };
-//
-
-const kalkulasiHarga = function () {
-
-
-};
-
-// const pertanyaanPertamaPilihLagi = () => {};
-
-//
-
-const kumpulanPertanyaan = () => {
-  pertanyaanPertama();
-};
-
-//
 
 const keranjang = () => {
-  console.log(simpanKeKeranjang);
-  console.log("\nini keranjang nya\n");
-  readline.question("mau kembali atau keluar(Y/N)?", (keranjangOut) => {
+  console.log("\nIsi Keranjang:\n");
+
+  let i = 0;
+  while (i < jumlahKeranjang) {
+    console.log(
+      i +
+        1 +
+        ". " +
+        simpanKeKeranjang[i].menu +
+        " - Rp" +
+        simpanKeKeranjang[i].harga
+    );
+    i = i + 1;
+  }
+
+  console.log("\nTotal harga keranjang: Rp" + totalHargaKeranjang);
+
+  readline.question("\nMau kembali atau keluar (Y/N)? ", (keranjangOut) => {
     if (keranjangOut === "Y" || keranjangOut === "y") {
       console.clear();
       menuPertanyaan();
-    } else if (keranjangOut === "N" || keranjangOut === "n") {
+    } else {
       exit();
     }
   });
 };
-
-//
 
 const isiHistory = () => {
-  console.log("ini history\n");
-  sumHarga = console.log(keranjangJawabanMenu);
+  console.log("\nHistory Pesanan:\n");
 
-  // hitung total harga tanpa .length
-  let total = 0;
   let i = 0;
-  while (keranjangJawabanMenu[i].harga !== undefined) {
-    total = total + keranjangJawabanMenu[i].harga;
-    i = i + 1; // increment manual
+  while (i < jumlahHistory) {
+    console.log(
+      i + 1 + ". " + historyPesanan[i].menu + " - Rp" + historyPesanan[i].harga
+    );
+    i = i + 1;
   }
 
-  readline.question("mau kembali atau keluar (y/n)", (history) => {
-    // let ubahHistory = parseInt(history);
-    if (history === "Y" || history === "y") {
+  console.log("\nTotal harga history: Rp" + totalHargaHistory);
+
+  readline.question("\nMau kembali atau keluar (Y/N)? ", (historyOut) => {
+    if (historyOut === "Y" || historyOut === "y") {
       console.clear();
-      menuUtama();
-    } else if (history === "N" || history === "n") {
+      menuPertanyaan();
+    } else {
       exit();
     }
-    console.clear();
-    menuPertanyaan();
   });
 };
 
-//
-
 const exit = () => {
+  console.log("\nTerima kasih sudah memesan di KFC!\n");
   setTimeout(() => {
     readline.close();
   }, 500);
 };
+
+menuPertanyaan();
