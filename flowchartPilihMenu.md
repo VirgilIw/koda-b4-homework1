@@ -14,8 +14,10 @@ historyPesanan@{shape: lean-r, label: "historyPesanan = []"}
 
 utama@{shape: diamond, label: menuPertanyaan()}
 tanya@{shape: rect, label: menuUtama()}
-pertanyaan1@{shape: rect, label: silahkan pilih menu}
+pertanyaan1@{shape: rect, label: "silahkan pilih : (pertanyaan)"}
+parsePertanyaan1@{shape:rect, label: ubahPertanyaan = parseInt(pertanyaan)}
 cekPertanyaan1@{shape: diamond, label: if(ubahPertanyaan === 1)}
+
 
 
 menu1True@{shape: rect, label: menuMakan()}
@@ -58,7 +60,9 @@ totalHargaKeranjang--->jumlahKeranjang--->historyPesanan
 
 
 historyPesanan--->utama--true--->tanya
-tanya--->pertanyaan1--->cekPertanyaan1
+tanya--->pertanyaan1--->parsePertanyaan1
+parsePertanyaan1--->cekPertanyaan1
+
 
 cekPertanyaan1--true--->menu1True--->menu1TruePertanyaan
 cekPertanyaan1--false--->menu1False
