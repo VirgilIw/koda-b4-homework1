@@ -191,7 +191,10 @@ const isiHistory = () => {
   }
 
   console.log("\nTotal harga : Rp" + totalHargaHistory);
+  tambahIsiHistory();
+};
 
+const tambahIsiHistory = () => {
   readline.question(
     "\nKembali ke menu utama atau keluar (Y/N)? ",
     (historyOut) => {
