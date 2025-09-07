@@ -206,10 +206,14 @@ const isiHistory = () => {
 };
 
 const exit = () => {
-  console.log("\nTerima kasih sudah memesan di KFC!\n");
+  console.log("\nTerima kasih sudah memesan di KFC!");
+  setTimeout(() => {
+    console.log("♥️ ♥️ ♥️\n");
+  }, 200);
+
   setTimeout(() => {
     readline.close();
-  }, 500);
+  }, 1000);
 };
 
 menuPertanyaan();
