@@ -90,34 +90,34 @@ function menuMakan() {
 function pilihMenu(menu) {
   switch (menu) {
     case 1:
-      console.log(searchFood[0]);
+      console.log(`${searchFood[0].menu} = ${searchFood[0].harga}`);
       break;
     case 2:
-      console.log(searchFood[1]);
+      console.log(`${searchFood[1].menu} = ${searchFood[1].harga}`);
       break;
     case 3:
-      console.log(searchFood[2]);
+      console.log(`${searchFood[2].menu} = ${searchFood[2].harga}`);
       break;
     case 4:
-      console.log(searchFood[3]);
+      console.log(`${searchFood[3].menu} = ${searchFood[3].harga}`);
       break;
     case 5:
-      console.log(searchFood[4]);
+      console.log(`${searchFood[4].menu} = ${searchFood[4].harga}`);
       break;
     case 6:
-      console.log(searchFood[5]);
+      console.log(`${searchFood[5].menu} = ${searchFood[5].harga}`);
       break;
     case 7:
-      console.log(searchFood[6]);
+      console.log(`${searchFood[6].menu} ${searchFood[6].harga}`);
       break;
     case 8:
-      console.log(searchFood[7]);
+      console.log(`${searchFood[7].menu} ${searchFood[7].harga}`);
       break;
     case 9:
-      console.log(searchFood[8]);
+      console.log(`${searchFood[8].menu} ${searchFood[8].harga}`);
       break;
     case 10:
-      console.log(searchFood[9]);
+      console.log(`${searchFood[9].menu} ${searchFood[9].harga}`);
       break;
   }
 }
@@ -147,41 +147,56 @@ menuPertanyaan();
 
 let keranjangJawabanMenu = [];
 let simpanKeKeranjang = [];
-
-//
+let jumlahKeranjang = 0;
+let sumHarga = 0;
 
 const pertanyaanPertama = () => {
-  readline.question(
-    "Silahkan pilih menu atau mau kembali(B) : ",
-    (jawaban1) => {
+  readline.question("Silahkan pilih menu : ", (jawaban1) => {
+    console.clear();
+    let ubahJawaban1 = parseInt(jawaban1);
+
+    pilihMenu(ubahJawaban1);
+
+    // let aksesKey =
+    //   // console.log(gabung);
+
+    keranjangJawabanMenu = [
+      ...keranjangJawabanMenu,
+      searchFood[ubahJawaban1 - 1].menu +
+        " " +
+        "=" +
+        " " +
+        searchFood[ubahJawaban1 - 1].harga,
+
+      (sumHarga = searchFood[ubahJawaban1 - 1].harga),
+      console.log(sumHarga),
+    ];
+
+    simpanKeKeranjang[jumlahKeranjang] = `${
+      searchFood[ubahJawaban1 - 1].menu
+    } = ${searchFood[ubahJawaban1 - 1].harga}`;
+
+    //
+    jumlahKeranjang = jumlahKeranjang + 1;
+    console.log(keranjangJawabanMenu);
+
+    readline.question("Mau pilih menu lagi (Y/N) ? ", (jawaban2) => {
       console.clear();
-      let ubahJawaban1 = parseInt(jawaban1);
-      if (ubahJawaban1 === "B" || ubahJawaban1 === "b") {
-        menuUtama();
+      if (jawaban2 === "Y" || jawaban2 === "y") {
+        menuMakan();
+        pertanyaanPertama();
+      } else if (jawaban2 === "N" || jawaban2 === "n") {
+        menuPertanyaan();
       }
-      pilihMenu(ubahJawaban1);
-
-      keranjangJawabanMenu = [
-        ...keranjangJawabanMenu,
-        searchFood[ubahJawaban1 - 1],
-      ];
-
-      simpanKeKeranjang = [...simpanKeKeranjang, searchFood[ubahJawaban1 - 1]];
-
-      //
-      readline.question("Mau pilih menu lagi (Y/N) ? ", (jawaban2) => {
-        console.clear();
-        if (jawaban2 === "y" || jawaban2 === "Y") {
-          menuMakan();
-          pertanyaanPertama();
-        } else if (jawaban2 === "n" || jawaban2 === "N") {
-          menuPertanyaan();
-        }
-      });
-    }
-  );
+    });
+  });
 };
 //
+
+const kalkulasiHarga = function () {
+
+
+};
 
 // const pertanyaanPertamaPilihLagi = () => {};
 
@@ -195,7 +210,7 @@ const kumpulanPertanyaan = () => {
 
 const keranjang = () => {
   console.log(simpanKeKeranjang);
-  console.log("ini keranjang nya");
+  console.log("\nini keranjang nya\n");
   readline.question("mau kembali atau keluar(Y/N)?", (keranjangOut) => {
     if (keranjangOut === "Y" || keranjangOut === "y") {
       console.clear();
@@ -208,14 +223,21 @@ const keranjang = () => {
 
 //
 
-let sumHarga = [];
 const isiHistory = () => {
   console.log("ini history\n");
   sumHarga = console.log(keranjangJawabanMenu);
 
+  // hitung total harga tanpa .length
+  let total = 0;
+  let i = 0;
+  while (keranjangJawabanMenu[i].harga !== undefined) {
+    total = total + keranjangJawabanMenu[i].harga;
+    i = i + 1; // increment manual
+  }
+
   readline.question("mau kembali atau keluar (y/n)", (history) => {
     // let ubahHistory = parseInt(history);
-    if (history === "y" || history === "Y") {
+    if (history === "Y" || history === "y") {
       console.clear();
       menuUtama();
     } else if (history === "N" || history === "n") {
