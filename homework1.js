@@ -67,19 +67,19 @@ function pilihMenu(menu) {
 
 const menuPertanyaan = () => {
   menuUtama();
-  readline.question("Silahkan pilih : ", (question) => {
+  readline.question("Silahkan pilih : ", (pertanyaan) => {
     console.clear();
-    let ubahQuestion = parseInt(question);
-    if (ubahQuestion === 1) {
+    let ubahPertanyaan = parseInt(pertanyaan);
+    if (ubahPertanyaan === 1) {
       menuMakan();
       pertanyaanPertama();
-    } else if (ubahQuestion === 2) {
+    } else if (ubahPertanyaan === 2) {
       console.clear();
       keranjang();
-    } else if (ubahQuestion === 3) {
+    } else if (ubahPertanyaan === 3) {
       console.clear();
       isiHistory();
-    } else if (ubahQuestion === 4) {
+    } else if (ubahPertanyaan === 4) {
       console.clear();
       exit();
     } else {
@@ -151,13 +151,31 @@ const keranjang = () => {
 
   console.log("\nTotal harga keranjang: Rp" + totalHargaKeranjang);
 
-  readline.question("\nMau kembali atau keluar (Y/N)? ", (keranjangOut) => {
-    if (keranjangOut === "Y" || keranjangOut === "y") {
-      console.clear();
-      menuPertanyaan();
-    } else {
-      exit();
+  ubahIsiKeranjang();
+};
+
+const ubahIsiKeranjang = () => {
+  readline.question("mau hapus pesanan (Y/N) ?", (gantiKeranjang) => {
+    if (gantiKeranjang === "Y" || gantiKeranjang === "y") {
+      jumlahKeranjang = 0; // reset counter
+      totalHargaKeranjang = 0; // reset total harga
+      simpanKeKeranjang = []; // reset array keranjang
+      console.log("\nKeranjang berhasil dikosongkan!\n");
     }
+
+    readline.question(
+      "\nKembali ke menu utama atau history (M/H)? ",
+      (keranjangOut) => {
+        if (keranjangOut === "M" || keranjangOut === "m") {
+          console.clear();
+          menuPertanyaan();
+        } else if (keranjangOut === "H" || keranjangOut === "h") {
+          isiHistory();
+        } else {
+          exit();
+        }
+      }
+    );
   });
 };
 
@@ -172,16 +190,19 @@ const isiHistory = () => {
     i = i + 1;
   }
 
-  console.log("\nTotal harga history: Rp" + totalHargaHistory);
+  console.log("\nTotal harga : Rp" + totalHargaHistory);
 
-  readline.question("\nMau kembali atau keluar (Y/N)? ", (historyOut) => {
-    if (historyOut === "Y" || historyOut === "y") {
-      console.clear();
-      menuPertanyaan();
-    } else {
-      exit();
+  readline.question(
+    "\nKembali ke menu utama atau keluar (Y/N)? ",
+    (historyOut) => {
+      if (historyOut === "Y" || historyOut === "y") {
+        console.clear();
+        menuPertanyaan();
+      } else {
+        exit();
+      }
     }
-  });
+  );
 };
 
 const exit = () => {
