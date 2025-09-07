@@ -1,4 +1,4 @@
-## flowchart mau ke daftar menu
+# flowchart mau ke daftar menu
 
 ```mermaid
 
