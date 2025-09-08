@@ -20,7 +20,7 @@ log3[/''Total harga : RP + totalHargaHistory''/]
 tambahIsiHisto["tambahIsiHistory()"]
 
 start--->let1--->let2
-let2--->pesan--->let3--->i
+let2--->let3--->pesan--->i
 while--false--->log3
 i--->while--true--->true1
 true1--->iTambah--->log3
