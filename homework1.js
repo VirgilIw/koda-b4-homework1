@@ -1,18 +1,16 @@
-// aplikasi pemesanan makanan
-// self service
-// spesifikasi
-// terminal web
-// 1. Menu
-// - pencarian makanan
-// - melihat keranjang
-// - history pemesanan
-// - kalkulasi harga setiap item dan total item
-// selalu ada menu exit
+import readline from "readline";
+import process from "process";
 
-const readline = require("readline").createInterface({
+const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+
+const tanya = (question) => {
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => resolve(answer));
+  });
+};
 
 const searchFood = [
   { menu: "Ayam dada", harga: 30000 },
@@ -27,195 +25,166 @@ const searchFood = [
   { menu: "Mango Float", harga: 1000 },
 ];
 
-// data keranjang
 let simpanKeKeranjang = [];
-let jumlahKeranjang = 0; // index manual
 let totalHargaKeranjang = 0;
 
-// data history
 let historyPesanan = [];
-let jumlahHistory = 0; // index manual
 let totalHargaHistory = 0;
 
-function menuUtama() {
+const menuUtama = () => {
+  console.clear();
   console.log("\n<--------- Selamat datang di KFC ----------->\n");
   console.log("1. Pilih Menu");
   console.log("2. Keranjang");
   console.log("3. History");
   console.log("4. Exit");
-}
-
-function menuMakan() {
-  let i = 0;
-  while (i < 10) {
-    console.log(
-      i + 1 + ". " + searchFood[i].menu + " - Rp" + searchFood[i].harga
-    );
-    i = i + 1;
-  }
-}
-
-function pilihMenu(menu) {
-  if (menu > 0 && menu <= 10) {
-    console.log(
-      searchFood[menu - 1].menu + " = Rp" + searchFood[menu - 1].harga
-    );
-  } else {
-    console.log("Menu tidak tersedia");
-  }
-}
-
-const menuPertanyaan = () => {
-  menuUtama();
-  readline.question("Silahkan pilih : ", (pertanyaan) => {
-    console.clear();
-    let ubahPertanyaan = parseInt(pertanyaan);
-    if (ubahPertanyaan === 1) {
-      menuMakan();
-      pertanyaanPertama();
-    } else if (ubahPertanyaan === 2) {
-      console.clear();
-      keranjang();
-    } else if (ubahPertanyaan === 3) {
-      console.clear();
-      isiHistory();
-    } else if (ubahPertanyaan === 4) {
-      console.clear();
-      exit();
-    } else {
-      menuPertanyaan();
-    }
-  });
 };
 
-const pertanyaanPertama = () => {
-  readline.question("Silahkan pilih nomor menu : ", (jawaban1) => {
-    console.clear();
-    let ubahJawaban1 = parseInt(jawaban1);
+const menuPertanyaan = async () => {
+  while (true) {
+    try {
+      menuUtama();
+      const pilih = await tanya("Silahkan pilih (1-4): ");
+      const pilihan = parseInt(pilih.trim());
 
-    if (ubahJawaban1 > 0 && ubahJawaban1 <= 10) {
-      pilihMenu(ubahJawaban1);
-
-      // masukkan ke keranjang
-      simpanKeKeranjang[jumlahKeranjang] = {
-        menu: searchFood[ubahJawaban1 - 1].menu,
-        harga: searchFood[ubahJawaban1 - 1].harga,
-      };
-
-      totalHargaKeranjang =
-        totalHargaKeranjang + searchFood[ubahJawaban1 - 1].harga;
-      jumlahKeranjang = jumlahKeranjang + 1;
-
-      // masukkan juga ke history
-      historyPesanan[jumlahHistory] = {
-        menu: searchFood[ubahJawaban1 - 1].menu,
-        harga: searchFood[ubahJawaban1 - 1].harga,
-      };
-
-      totalHargaHistory =
-        totalHargaHistory + searchFood[ubahJawaban1 - 1].harga;
-      jumlahHistory = jumlahHistory + 1;
-
-      console.log("\nItem ditambahkan ke keranjang!\n");
-    } else {
-      console.log("Nomor menu tidak valid!\n");
-    }
-
-    readline.question("Mau pilih menu lagi (Y/N)? ", (jawaban2) => {
-      console.clear();
-      if (jawaban2 === "Y" || jawaban2 === "y") {
-        menuMakan();
-        pertanyaanPertama();
-      } else {
-        menuPertanyaan();
+      switch (pilihan) {
+        case 1:
+          await pertanyaanPertama();
+          break;
+        case 2:
+          await keranjang();
+          break;
+        case 3:
+          await isiHistory();
+          break;
+        case 4:
+          exitApp(); // Memanggil fungsi exitApp untuk keluar
+          return;
+        default:
+          console.log(" Pilihan tidak valid!");
       }
-    });
-  });
+    } catch (err) {
+      console.log(" Terjadi error:", err.message);
+    }
+  }
 };
 
-const keranjang = () => {
-  console.log("\nIsi Keranjang:\n");
+const menuMakan = () => {
+  console.clear();
+  console.log("\n=== Menu Makanan ===");
+  searchFood.forEach((item, i) => {
+    console.log(`${i + 1}. ${item.menu} - Rp${item.harga}`);
+  });
+  console.log("0. Kembali ke Menu Utama");
+};
 
-  let i = 0;
-  while (i < jumlahKeranjang) {
-    console.log(
-      i +
-        1 +
-        ". " +
-        simpanKeKeranjang[i].menu +
-        " - Rp" +
-        simpanKeKeranjang[i].harga
-    );
-    i = i + 1;
+const pilihMenu = (nomor) => {
+  const index = nomor - 1;
+  if (index >= 0 && index < searchFood.length) {
+    const item = searchFood[index];
+    console.log(`\n✅ ${item.menu} = Rp${item.harga}`);
+    simpanKeKeranjang.push(item);
+    totalHargaKeranjang += item.harga;
+
+    historyPesanan.push(item);
+    totalHargaHistory += item.harga;
+  } else {
+    console.log("❌ Menu tidak tersedia!");
+  }
+};
+
+const pertanyaanPertama = async () => {
+  let lagi = true;
+  while (lagi) {
+    menuMakan();
+    try {
+      const jawaban = await tanya(
+        "\nSilahkan pilih menu (1-10) atau 0 untuk kembali: "
+      );
+      const ubahJawaban = parseInt(jawaban.trim());
+
+      if (ubahJawaban === 0) {
+        lagi = false;
+        continue;
+      }
+
+      if (isNaN(ubahJawaban) || ubahJawaban < 1 || ubahJawaban > 10) {
+        console.log("❌ Nomor menu tidak valid!");
+        continue;
+      }
+
+      pilihMenu(ubahJawaban);
+      console.log("\nItem ditambahkan ke keranjang!\n");
+
+      const lagiJawab = await tanya("Mau pilih menu lagi? (Y/N): ");
+      if (lagiJawab.trim().toLowerCase() !== "y") {
+        lagi = false;
+      }
+    } catch (err) {
+      console.log("❌ Terjadi error:", err.message);
+    }
+  }
+};
+
+const keranjang = async () => {
+  console.clear();
+  console.log("\n=== Isi Keranjang ===");
+  if (simpanKeKeranjang.length === 0) {
+    console.log("Keranjang kosong!");
+  } else {
+    simpanKeKeranjang.forEach((item, i) => {
+      console.log(`${i + 1}. ${item.menu} - Rp${item.harga}`);
+    });
+    console.log(`\nTotal harga: Rp${totalHargaKeranjang}`);
   }
 
-  console.log("\nTotal harga keranjang: Rp" + totalHargaKeranjang);
-
-  ubahIsiKeranjang();
-};
-
-const ubahIsiKeranjang = () => {
-  readline.question("mau hapus pesanan (Y/N) ?", (gantiKeranjang) => {
-    if (gantiKeranjang === "Y" || gantiKeranjang === "y") {
-      jumlahKeranjang = 0; // reset counter
-      totalHargaKeranjang = 0; // reset total harga
-      simpanKeKeranjang = []; // reset array keranjang
+  try {
+    const hapus = await tanya("Mau hapus keranjang? (Y/N): ");
+    if (hapus.trim().toLowerCase() === "y") {
+      simpanKeKeranjang = [];
+      totalHargaKeranjang = 0;
       console.log("\nKeranjang berhasil dikosongkan!\n");
     }
 
-    readline.question(
-      "\nKembali ke menu utama atau history (M/H)? ",
-      (keranjangOut) => {
-        if (keranjangOut === "M" || keranjangOut === "m") {
-          console.clear();
-          menuPertanyaan();
-        } else if (keranjangOut === "H" || keranjangOut === "h") {
-          isiHistory();
-        } else {
-          exit();
-        }
-      }
-    );
-  });
+    const lanjut = await tanya("Kembali ke menu utama? (Y/N): ");
+    if (lanjut.trim().toLowerCase() !== "y") {
+      menuUtama();
+      return;
+    }
+  } catch (err) {
+    console.log("❌ Terjadi error:", err.message);
+  }
 };
 
-const isiHistory = () => {
-  console.log("\nHistory Pesanan:\n");
-
-  let i = 0;
-  while (i < jumlahHistory) {
-    console.log(
-      i + 1 + ". " + historyPesanan[i].menu + " - Rp" + historyPesanan[i].harga
-    );
-    i = i + 1;
+const isiHistory = async () => {
+  console.clear();
+  console.log("\n=== History Pesanan ===");
+  if (historyPesanan.length === 0) {
+    console.log("Belum ada history!");
+  } else {
+    historyPesanan.forEach((item, i) => {
+      console.log(`${i + 1}. ${item.menu} - Rp${item.harga}`);
+    });
+    console.log(`\nTotal harga: Rp${totalHargaHistory}`);
   }
 
-  console.log("\nTotal harga : Rp" + totalHargaHistory);
-  tambahIsiHistory();
-};
-
-const tambahIsiHistory = () => {
-  readline.question(
-    "\nKembali ke menu utama atau keluar (Y/N)? ",
-    (historyOut) => {
-      if (historyOut === "Y" || historyOut === "y") {
-        console.clear();
-        menuPertanyaan();
-      } else {
-        exit();
-      }
+  try {
+    const lanjut = await tanya("Kembali ke menu utama? (Y/N): ");
+    if (lanjut.trim().toLowerCase() !== "y") {
+      return;
     }
-  );
+  } catch (err) {
+    console.log("❌ Terjadi error:", err.message);
+  }
 };
 
-const exit = () => {
+const exitApp = () => {
+  console.clear();
   console.log("\nTerima kasih sudah memesan di KFC!");
   setTimeout(() => {
     console.log("♥️ ♥️ ♥️\n");
-  }, 200);
-
-  setTimeout(() => {
-    readline.close();
+    rl.close();
+    process.exit(0);
   }, 1000);
 };
 
