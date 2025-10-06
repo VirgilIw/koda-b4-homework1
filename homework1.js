@@ -119,6 +119,63 @@ const lihatKeranjang = () => {
   }
 };
 
+const buatInvoice = (items, total) => {
+  const now = new Date();
+  const tanggal = now.toLocaleDateString("id-ID");
+  const waktu = now.toLocaleTimeString("id-ID");
+
+  console.log("\n" + "=".repeat(30));
+  console.log("      🍗 KFC INVOICE 🍗");
+  console.log("=".repeat(30));
+  console.log(`Tanggal: ${tanggal} ${waktu}`);
+  console.log("-".repeat(30));
+
+  items.forEach((item, i) => {
+    console.log(`${i + 1}. ${item.nama} - Rp${item.harga.toLocaleString()}`);
+  });
+
+  console.log("-".repeat(30));
+  console.log(`TOTAL: Rp${total.toLocaleString()}`);
+  console.log("=".repeat(30));
+  console.log("Terima kasih sudah berbelanja!");
+  console.log("=".repeat(30));
+};
+
+const checkout = () => {
+  if (keranjang.length === 0) {
+    console.log("❌ Keranjang kosong!");
+    setTimeout(() => menuUtama(), 1500);
+    return;
+  }
+
+  const total = tampilKeranjang();
+  console.log("\n=== CHECKOUT ===");
+
+  rl.question("Konfirmasi pembayaran? (y/n): ", (konfirmasi) => {
+    if (konfirmasi.toLowerCase() === "y") {
+      console.log("\n✅ PEMBAYARAN BERHASIL!");
+      buatInvoice(keranjang, total); // 👈 DIPANGGIL DISINI
+
+      const pesanan = {
+        tanggal: new Date().toLocaleDateString("id-ID"),
+        items: [...keranjang],
+        total: total,
+      };
+      history.push(pesanan);
+
+      // Kosongkan keranjang
+      keranjang = [];
+
+      rl.question("\nTekan enter untuk kembali ke menu utama...", () => {
+        menuUtama();
+      });
+    } else {
+      console.log("❌ Checkout dibatalkan!");
+      setTimeout(() => menuUtama(), 1000);
+    }
+  });
+};
+
 const lihatHistory = () => {
   tampilHistory();
   rl.question("Kembali ke menu utama? (tekan enter): ", () => {
@@ -165,7 +222,7 @@ const menuUtama = () => {
   });
 };
 
-console.log("🍗 Selamat datang di KFC! 🍗");
+console.log("Selamat datang di KFC! 🍗");
 setTimeout(() => {
   menuUtama();
-}, 1000);
+}, 500);
